@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -24,12 +25,16 @@ export class ProductsController {
 
   @Get('/:id')
   public getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.productsService.getById(id);
+    const prod = this.productsService.getById(id);
+    if (!prod) throw new NotFoundException('Product not found');
+    return prod;
   }
   @Delete('/:id')
   public delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    if (!this.productsService.getById(id))
+      throw new NotFoundException('Product not found');
     this.productsService.deleteById(id);
-    return this.productsService.getAll();
+    return { success: true };
   }
   @Post('/')
   create(@Body() productData: CreateProductDTO) {
@@ -37,10 +42,14 @@ export class ProductsController {
   }
 
   @Put('/:id')
-  updateById(
+  update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() productData: UpdateProductDTO,
   ) {
-    return this.productsService.updateById(id, productData);
+    if (!this.productsService.getById(id))
+      throw new NotFoundException('Product not found');
+
+    this.productsService.updateById(id, productData);
+    return { success: true };
   }
 }
