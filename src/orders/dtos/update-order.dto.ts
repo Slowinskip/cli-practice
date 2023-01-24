@@ -7,8 +7,6 @@ export class UpdateOrderDTO {
   client: string;
 
   @IsNotEmpty()
-  @IsInt()
-  @Min(0)
   productId: string;
 
   @IsNotEmpty()
