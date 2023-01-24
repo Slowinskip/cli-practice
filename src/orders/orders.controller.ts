@@ -11,7 +11,7 @@ import {
 import { OrdersService } from './orders.service';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { CreateOrderDTO } from './dtos/create-order.dto';
-import { UpdateOrderDTO } from './dtos/update-order.dto';
+import { UpdateProductDTO } from 'src/products/dtos/update-product.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -37,19 +37,19 @@ export class OrdersController {
     return { success: true };
   }
   @Post('/')
-  public create(@Body() productData: CreateOrderDTO) {
-    return this.ordersService.create(productData);
+  public create(@Body() orderData) {
+    return this.ordersService.create(orderData);
   }
 
   @Put('/:id')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() productData: UpdateOrderDTO,
+    @Body() orderData,
   ) {
     if (!(await this.ordersService.getById(id)))
       throw new NotFoundException('Product not found');
 
-    await this.ordersService.updateById(id, productData);
+    await this.ordersService.updateById(id, orderData);
     return { success: true };
   }
 }
